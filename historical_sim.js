@@ -248,15 +248,15 @@ wendou = wendou.map(function (img) {
   var log_H = h.log().rename('log_H');
   var a = img.select('area');
   var log_A = a.log().rename('log_A');
-  return img.addBands(log_H).addBands(log_A).addBands(ee.Image.constant(1).rename('log_C1'));
+  return img.addBands(log_H).addBands(log_A).addBands(ee.Image.constant(0.001).rename('log_C'));
 });
 
 
 // trend line would be
-// A = C1 (h) ^ alpha
+// A = C (h) ^ alpha
 // this would be reduced to
-// log A = alpha * log h + log C1
-var independents = ee.List(['log_C1', 'log_H']);
+// log A = alpha * log h + log C
+var independents = ee.List(['log_C', 'log_H']);
 var dependent = ee.String('log_A');
 
 // Compute a linear trend.  This will have two bands: 'residuals' and 
@@ -264,7 +264,32 @@ var dependent = ee.String('log_A');
 // (Columns are for dependent variables)
 var trend = wendou.select(independents.add(dependent))
     .reduce(ee.Reducer.linearRegression(independents.length(), 1));
-Map.addLayer(trend, {}, 'trend array image');
+
+// Flatten the coefficients into a 2-band image.
+var coefficients = trend.select('coefficients')
+    // Get rid of extra dimensions and convert back to a regular image
+    .arrayProject([0])
+    .arrayFlatten([independents]);
+
+// Compute fitted values.
+var fitted = wendou.map(function(image) {
+    return image.addBands(
+        image.select(independent)
+        .multiply(coefficients)
+        .reduce('sum')
+        .rename('fitted'));
+});
+
+print('fitted', fitted);
+
+// Compute the trend series.
+// var detrended = wendou.map(function(image) {
+//     return ee.Image.constant(alpha).multiply(image.select('log_H'))image.select(image.select(dependent).subtract(
+//             image.select(independents).multiply(coefficients)
+//             .reduce('sum'))
+//         .rename(dependent)
+//         .copyProperties(image, ['system:time_start']);
+// });
 
 
 
