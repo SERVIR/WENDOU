@@ -274,7 +274,7 @@ var coefficients = trend.select('coefficients')
 // Compute fitted values.
 var fitted = wendou.map(function(image) {
     return image.addBands(
-        image.select(independent)
+        image.select(independents)
         .multiply(coefficients)
         .reduce('sum')
         .rename('fitted'));
