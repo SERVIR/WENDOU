@@ -278,16 +278,16 @@ var VAHChart =
       vAxis: {
         title: 'Area'
       },
-      pointSize: 4,
-    trendlines: {
-        0: {
-          type: 'exponential',
-          visibleInLegend: true,
-          color: 'red',
-          lineWidth: 7,
-          opacity: 0.4,
-        }
-    }
+      pointSize: 2,
+    // trendlines: {
+    //     0: {
+    //       type: 'exponential',
+    //       visibleInLegend: true,
+    //       color: 'red',
+    //       lineWidth: 7,
+    //       opacity: 0.4,
+    //     }
+    // }
   });
 
 print(VAHChart);
@@ -304,7 +304,7 @@ var VAHChart1 =
       vAxis: {
         title: 'Fitted'
       },
-      pointSize: 4,
+      pointSize: 2,
       trendlines: {
             0: {
                 color: 'red',
@@ -327,21 +327,6 @@ wendou = wendou.map(function (img) {
 });
 
 print('wendou', wendou);
-
-// Plot the fitted model and the original data at the ROI.
-print(ui.Chart.image.series({
-          imageCollection: wendou.select(['area', 'area_modeled']),
-          region: pond.geometry(),
-          reducer: ee.Reducer.mean(),
-          scale: demScale,
-          xProperty: 'height'
-        })
-    .setSeriesNames(['area', 'area_modeled'])
-    .setOptions({
-        title: 'Harmonic model: original and fitted values',
-        lineWidth: 1,
-        pointSize: 3,
-    }));
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
