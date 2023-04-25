@@ -271,6 +271,8 @@ var coefficients = trend.select('coefficients')
     .arrayProject([0])
     .arrayFlatten([independents]);
 
+print('coefficients', coefficients);
+
 // Compute fitted values.
 wendou = wendou.map(function(image) {
     return image.addBands(
@@ -310,7 +312,6 @@ var samples = wendouList.map(function (img) {
 samples = ee.FeatureCollection(samples.flatten());
 samples = samples.flatten();
 Map.addLayer(samples, {}, 'samples');
-print('samples', samples.limit(10));
 
 
 // Prepare the chart.
@@ -326,14 +327,40 @@ var VAHChart =
         title: 'Area'
       },
       pointSize: 4,
-      // trendlines: {
-      //       0: {
-      //           color: 'CC0000'
-      //       }
-      //   },
-    });
+    trendlines: {
+        0: {
+          type: 'exponential',
+          visibleInLegend: true,
+          color: 'red',
+          lineWidth: 7,
+          opacity: 0.2,
+        }
+    }
+  });
 
 print(VAHChart);
+
+// Prepare the chart.
+var VAHChart1 =
+  ui.Chart.feature.groups(samples, 'area', 'fitted', 'series')
+    .setChartType('ScatterChart')
+    .setOptions({
+      title: 'Pond: ID ' + pondId,
+      hAxis: {
+        title: 'Area'
+      },
+      vAxis: {
+        title: 'Fitted'
+      },
+      pointSize: 4,
+      trendlines: {
+            0: {
+                color: 'CC0000'
+            }
+        },
+    });
+
+print(VAHChart1);
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
