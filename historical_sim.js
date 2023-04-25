@@ -281,7 +281,7 @@ wendou = wendou.map(function(image) {
 });
 
 wendou = wendou.map(function (img) {
-  return img.addBands(ee.Image(10).pow(image.select('log_fitted')).rename('fitted'));
+  return img.addBands(ee.Image(10).pow(img.select('log_fitted')).rename('fitted'));
 });
 
 print('wendou', wendou);
