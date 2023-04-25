@@ -166,27 +166,19 @@ var pondPct = modelOut.select('area').map(function(img) {
 // print("PondPct", pondPct);
 
 
-var modelOutLists = modelOut.toList(modelOut.size());
+// var modelOutLists = modelOut.toList(modelOut.size());
 
-for (var i=300; i<=forecastDays; i++) {
-  var img = ee.Image(modelOutLists.get(i));
-  Export.image.toAsset({
-    image: img,
-    description: 'img_'+i,
-    assetId: 'users/biplovbhandari/UAH/Wendou_2019/image_' + i,
-    region: pond.geometry().bounds(),
-    scale: demScale,
-    maxPixels: 1E13
-  });
-}
-
-Map.addLayer(modelOut.select('height').mean(),{},'Model Out',false);
-Map.addLayer(ponds,{color:'yellow'},'Ponds',false);
-Map.addLayer(pond,{color:'red'},'Analysis test',false);
-
-Map.centerObject(pond, 13);
-
-
+// for (var i=300; i<=forecastDays; i++) {
+//   var img = ee.Image(modelOutLists.get(i));
+//   Export.image.toAsset({
+//     image: img,
+//     description: 'img_'+i,
+//     assetId: 'users/biplovbhandari/UAH/Wendou_2019/image_' + i,
+//     region: pond.geometry().bounds(),
+//     scale: demScale,
+//     maxPixels: 1E13
+//   });
+// }
 
 var timeSeries = ui.Chart.image.seriesByRegion({
   imageCollection: wendou,
@@ -243,9 +235,6 @@ var VAHChart =
     });
 
 print(VAHChart);
-
-
-
 
 
 /*---------------------------------------------------------------------------------------*/
@@ -370,4 +359,5 @@ function calcInitIapWithChirps(collection, pastDays) {
 }
 
 
-Map.addLayer(pond, {color: 'red'}, "pond")
+Map.addLayer(pond, {color: 'red'}, 'pond');
+Map.centerObject(pond, 13);
