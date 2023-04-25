@@ -286,8 +286,6 @@ var samples = wendouList.map(function (img) {
 });
 samples = ee.FeatureCollection(samples.flatten());
 samples = samples.flatten();
-Map.addLayer(samples, {}, 'samples');
-print('samples', samples.limit(10));
 
 
 // Prepare the chart.
