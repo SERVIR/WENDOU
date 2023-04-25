@@ -166,13 +166,13 @@ var pondPct = modelOut.select('area').map(function(img) {
 
 
 var modelOutLists = modelOut.toList(modelOut.size());
-
-for (var i=300; i<=forecastDays; i++) {
+//forecastDays
+for (var i=0; i<100; i++) {
   var img = ee.Image(modelOutLists.get(i));
   Export.image.toAsset({
     image: img,
     description: 'img_'+i,
-    assetId: 'users/biplovbhandari/UAH/Wendou_2019/image_' + i,
+    assetId: 'users/biplovbhandari/UAH/Wendou_2021/image_' + i,
     region: pond.geometry().bounds(),
     scale: demScale,
     maxPixels: 1E13
