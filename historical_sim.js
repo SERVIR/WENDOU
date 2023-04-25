@@ -37,7 +37,7 @@ Map.addLayer(elv, {min: 40, max: 70}, 'dem_2m');
 // var studyArea = ee.Geometry.Rectangle([-180,-60,180,85])//mk_pond.buffer(10000,100).geometry()
 
 var forecastDays = 365;
-var initDate = ee.Date('2019-01-01');//ee.Date(date); 
+var initDate = ee.Date('2021-01-01');//ee.Date(date); 
 
 var pondId = 75; /// test case was #1
 
