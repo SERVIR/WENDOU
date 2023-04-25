@@ -20,7 +20,7 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     chirps = ee.ImageCollection("UCSB-CHG/CHIRPS/DAILY"),
     volumne_pt = /* color: #d63000 */ee.Geometry.MultiPoint(),
     lc8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA"),
-    wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou");
+    wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Original author: K. Markert
 // Based on Soti et al. (2010) --> https://hess.copernicus.org/articles/14/1449/2010/hess-14-1449-2010.pdf
