@@ -204,43 +204,6 @@ timeSeries.setOptions({
 
 print(timeSeries);
 
-// var wendouList = wendou.toList(wendou.size());
-// var loc = pond.geometry().bounds().centroid(1);
-// var samples = wendouList.map(function (img) {
-//   img = ee.Image(img);
-//   return img.sample({
-//     region: loc,
-//     scale: demScale
-//   });
-// });
-// samples = ee.FeatureCollection(samples.flatten());
-// samples = samples.flatten();
-// Map.addLayer(samples, {}, 'samples');
-// print('samples', samples);
-
-
-// // Prepare the chart.
-// var VAHChart =
-//   ui.Chart.feature.groups(samples, 'height', 'area', 'series')
-//     .setChartType('ScatterChart')
-//     .setOptions({
-//       title: 'Pond: ID ' + pondId,
-//       hAxis: {
-//         title: 'Height'
-//       },
-//       vAxis: {
-//         title: 'Area'
-//       },
-//       pointSize: 4,
-//       // trendlines: {
-//       //       0: {
-//       //           color: 'CC0000'
-//       //       }
-//       //   },
-//     });
-
-// print(VAHChart);
-
 
 
 wendou = wendou.map(function (img) {
@@ -283,21 +246,10 @@ wendou = wendou.map(function(image) {
 });
 
 wendou = wendou.map(function (img) {
-  return img.addBands(ee.Image(10).pow(img.select('log_fitted')).rename('fitted'));
+  return img.addBands(ee.Image(10).pow(img.select('log_fitted')).rename('area_modeled'));
 });
 
 print('wendou', wendou);
-
-// Plot the fitted model and the original data at the ROI.
-// print(ui.Chart.image.series(
-//         wendou.select(['fitted', 'area']), pond.geometry(), ee.Reducer
-//         .mean(), 30)
-//     .setSeriesNames(['fitted', 'area'])
-//     .setOptions({
-//         title: 'Modeled',
-//         lineWidth: 1,
-//         pointSize: 3,
-    // }));
     
 
 var wendouList = wendou.toList(wendou.size());
@@ -333,7 +285,7 @@ var VAHChart =
           visibleInLegend: true,
           color: 'red',
           lineWidth: 7,
-          opacity: 0.2,
+          opacity: 0.4,
         }
     }
   });
@@ -342,7 +294,7 @@ print(VAHChart);
 
 // Prepare the chart.
 var VAHChart1 =
-  ui.Chart.feature.groups(samples, 'area', 'fitted', 'series')
+  ui.Chart.feature.groups(samples, 'area', 'area_modeled', 'series')
     .setChartType('ScatterChart')
     .setOptions({
       title: 'Pond: ID ' + pondId,
@@ -355,12 +307,41 @@ var VAHChart1 =
       pointSize: 4,
       trendlines: {
             0: {
-                color: 'CC0000'
+                color: 'red',
+                lineWidth: 7,
+                opacity: 0.4,
             }
         },
     });
 
 print(VAHChart1);
+
+wendou = wendou.map(function (img) {
+  var area_modeled = img.select('area_modeled').reduceRegion({
+    geometry: pond.geometry(),
+    reducer: ee.Reducer.mean(),
+    scale: 30,
+    maxPixels: 1e9
+  });
+  return img.set('area_modeled', area_modeled);
+});
+
+print('wendou', wendou);
+
+// Plot the fitted model and the original data at the ROI.
+print(ui.Chart.image.series({
+          imageCollection: wendou.select(['area', 'area_modeled']),
+          region: pond.geometry(),
+          reducer: ee.Reducer.mean(),
+          scale: demScale,
+          xProperty: 'height'
+        })
+    .setSeriesNames(['area', 'area_modeled'])
+    .setOptions({
+        title: 'Harmonic model: original and fitted values',
+        lineWidth: 1,
+        pointSize: 3,
+    }));
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
