@@ -165,19 +165,19 @@ var pondPct = modelOut.select('area').map(function(img) {
 // print("PondPct", pondPct);
 
 
-// var modelOutLists = modelOut.toList(modelOut.size());
+var modelOutLists = modelOut.toList(modelOut.size());
 
-// for (var i=300; i<=forecastDays; i++) {
-//   var img = ee.Image(modelOutLists.get(i));
-//   Export.image.toAsset({
-//     image: img,
-//     description: 'img_'+i,
-//     assetId: 'users/biplovbhandari/UAH/Wendou_2019/image_' + i,
-//     region: pond.geometry().bounds(),
-//     scale: demScale,
-//     maxPixels: 1E13
-//   });
-// }
+for (var i=300; i<=forecastDays; i++) {
+  var img = ee.Image(modelOutLists.get(i));
+  Export.image.toAsset({
+    image: img,
+    description: 'img_'+i,
+    assetId: 'users/biplovbhandari/UAH/Wendou_2019/image_' + i,
+    region: pond.geometry().bounds(),
+    scale: demScale,
+    maxPixels: 1E13
+  });
+}
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
