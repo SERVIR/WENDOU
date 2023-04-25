@@ -216,6 +216,7 @@ wendou = wendou.map(function (img) {
   return img.addBands(log_H).addBands(log_A).addBands(log_V).addBands(ee.Image.constant(0.001).rename('log_C'));
 });
 
+// Areal Trend Line
 
 // trend line would be
 // A = C (h) ^ alpha
@@ -249,30 +250,40 @@ wendou = wendou.map(function (img) {
   return img.addBands(ee.Image(10).pow(img.select('log_fitted_area')).rename('area_modeled'));
 });
 
-// wendou = wendou.map(function (img) {
-//   var height = img.select('height').reduceRegion({
-//     geometry: pond.geometry(),
-//     reducer: ee.Reducer.mean(),
-//     scale: 30,
-//     maxPixels: 1e9
-//   }).get('height');
-  
-//   var area = img.select('area').reduceRegion({
-//     geometry: pond.geometry(),
-//     reducer: ee.Reducer.mean(),
-//     scale: 30,
-//     maxPixels: 1e9
-//   }).get('area');
-  
-//   var area_modeled = img.select('area_modeled').reduceRegion({
-//     geometry: pond.geometry(),
-//     reducer: ee.Reducer.mean(),
-//     scale: 30,
-//     maxPixels: 1e9
-//   }).get('area_modeled');
 
-//   return img.set('height', height, 'area', area, 'area_modeled', area_modeled);
-// });
+// Volumetric Trend Line
+// trend line would be
+// V = C (h) ^ alpha
+// this would be reduced to
+// log V = alpha * log h + log C
+var independents = ee.List(['log_C', 'log_H']);
+var dependent = ee.String('log_V');
+
+// Compute a linear trend.  This will have two bands: 'residuals' and 
+// a 2x1 (Array Image) band called 'coefficients'.
+// (Columns are for dependent variables)
+var trend = wendou.select(independents.add(dependent))
+    .reduce(ee.Reducer.linearRegression(independents.length(), 1));
+
+// Flatten the coefficients into a 2-band image.
+var coefficients = trend.select('coefficients')
+    // Get rid of extra dimensions and convert back to a regular image
+    .arrayProject([0])
+    .arrayFlatten([independents]);
+
+// Compute fitted values.
+wendou = wendou.map(function(image) {
+    return image.addBands(
+        image.select(independents)
+        .multiply(coefficients)
+        .reduce('sum')
+        .rename('log_fitted_vol'));
+});
+
+wendou = wendou.map(function (img) {
+  return img.addBands(ee.Image(10).pow(img.select('log_fitted_vol')).rename('vol_modeled'));
+});
+
 
 print('wendou', wendou);
     
@@ -385,43 +396,6 @@ var VAHChart =
   });
 
 print('Volume-Height Chart', VAHChart);
-
-
-
-
-
-// trend line would be
-// V = C (h) ^ alpha
-// this would be reduced to
-// log V = alpha * log h + log C
-var independents = ee.List(['log_C', 'log_H']);
-var dependent = ee.String('log_V');
-
-// Compute a linear trend.  This will have two bands: 'residuals' and 
-// a 2x1 (Array Image) band called 'coefficients'.
-// (Columns are for dependent variables)
-var trend = wendou.select(independents.add(dependent))
-    .reduce(ee.Reducer.linearRegression(independents.length(), 1));
-
-// Flatten the coefficients into a 2-band image.
-var coefficients = trend.select('coefficients')
-    // Get rid of extra dimensions and convert back to a regular image
-    .arrayProject([0])
-    .arrayFlatten([independents]);
-
-// Compute fitted values.
-wendou = wendou.map(function(image) {
-    return image.addBands(
-        image.select(independents)
-        .multiply(coefficients)
-        .reduce('sum')
-        .rename('log_fitted_vol'));
-});
-
-wendou = wendou.map(function (img) {
-  return img.addBands(ee.Image(10).pow(img.select('log_fitted_vol')).rename('vol_modeled'));
-});
-
 
 // Prepare the chart.
 var VAHChart1 =
