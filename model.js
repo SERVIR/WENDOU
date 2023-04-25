@@ -1,3 +1,26 @@
+var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
+    mk_pond = /* color: #d63000 */ee.Feature(
+        ee.Geometry.Polygon(
+            [[[103.11428283212649, 16.181837537330324],
+              [103.11576341150271, 16.181837537330324],
+              [103.11509822366702, 16.183238846689054],
+              [103.11411117074954, 16.182929735185496]]]),
+        {
+          "system:index": "0"
+        }),
+    studyArea = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.Polygon(
+        [[[-15.866, 16.49],
+          [-15.866, 14.193],
+          [-12.99, 14.193],
+          [-12.99, 16.49]]]),
+    chirps = ee.ImageCollection("UCSB-CHG/CHIRPS/DAILY"),
+    volumne_pt = /* color: #d63000 */ee.Geometry.MultiPoint(),
+    lc8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA"),
+    wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019");
+
 // Original author: K. Markert
 // Based on Soti et al. (2010) --> https://hess.copernicus.org/articles/14/1449/2010/hess-14-1449-2010.pdf
 // Edited by: Biplov Bhandari . SCO (4/25/2023)
