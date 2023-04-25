@@ -249,6 +249,31 @@ wendou = wendou.map(function (img) {
   return img.addBands(ee.Image(10).pow(img.select('log_fitted')).rename('area_modeled'));
 });
 
+wendou = wendou.map(function (img) {
+  var height = img.select('height').reduceRegion({
+    geometry: pond.geometry(),
+    reducer: ee.Reducer.mean(),
+    scale: 30,
+    maxPixels: 1e9
+  }).get('height');
+  
+  var area = img.select('area').reduceRegion({
+    geometry: pond.geometry(),
+    reducer: ee.Reducer.mean(),
+    scale: 30,
+    maxPixels: 1e9
+  }).get('area');
+  
+  var area_modeled = img.select('area_modeled').reduceRegion({
+    geometry: pond.geometry(),
+    reducer: ee.Reducer.mean(),
+    scale: 30,
+    maxPixels: 1e9
+  }).get('area_modeled');
+
+  return img.set('height', height, 'area', area, 'area_modeled', area_modeled);
+});
+
 print('wendou', wendou);
     
 
@@ -264,6 +289,7 @@ var samples = wendouList.map(function (img) {
 samples = ee.FeatureCollection(samples.flatten());
 samples = samples.flatten();
 Map.addLayer(samples, {}, 'samples');
+print('samples', samples.limit(10));
 
 
 // Prepare the chart.
@@ -316,17 +342,25 @@ var VAHChart1 =
 
 print(VAHChart1);
 
-wendou = wendou.map(function (img) {
-  var area_modeled = img.select('height').reduceRegion({
-    geometry: pond.geometry(),
-    reducer: ee.Reducer.mean(),
-    scale: 30,
-    maxPixels: 1e9
-  }).get('height');
-  return img.set('height', area_modeled);
-});
+var areaDiff = function(feature) {
+  var diff = feature.get('area').subtract(feature.get('area_modeled'));
+  // Return the feature with the squared difference set to the 'diff' property.
+  return feature.set('diff', diff.pow(2));
+};
 
-print('wendou', wendou);
+// Calculate RMSE for population of difference pairs.
+var rmse = ee.Number(
+  // Map the difference function over the collection.
+  samples.map(areaDiff)
+  // Reduce to get the mean squared difference.
+  .reduceColumns(ee.Reducer.mean(), ['diff'])
+  .get('mean')
+)
+// Compute the square root of the mean square to get RMSE.
+.sqrt();
+
+// Print the result.
+print('RMSE=', rmse);
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
