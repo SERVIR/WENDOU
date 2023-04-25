@@ -317,13 +317,13 @@ var VAHChart1 =
 print(VAHChart1);
 
 wendou = wendou.map(function (img) {
-  var area_modeled = img.select('area_modeled').reduceRegion({
+  var area_modeled = img.select('height').reduceRegion({
     geometry: pond.geometry(),
     reducer: ee.Reducer.mean(),
     scale: 30,
     maxPixels: 1e9
-  }).get('area_modeled');
-  return img.set('area_modeled', area_modeled);
+  }).get('height');
+  return img.set('height', area_modeled);
 });
 
 print('wendou', wendou);
