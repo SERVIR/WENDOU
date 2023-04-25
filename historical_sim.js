@@ -343,12 +343,11 @@ var VAHChart1 =
 print(VAHChart1);
 
 var areaDiff = function(feature) {
-  var diff = feature.get('area').subtract(feature.get('area_modeled'));
+  var diff = ee.Number(feature.get('area')).subtract(ee.Number(feature.get('area_modeled')));
   // Return the feature with the squared difference set to the 'diff' property.
   return feature.set('diff', diff.pow(2));
 };
 
-// Calculate RMSE for population of difference pairs.
 var rmse = ee.Number(
   // Map the difference function over the collection.
   samples.map(areaDiff)
