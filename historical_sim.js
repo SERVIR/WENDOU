@@ -193,7 +193,7 @@ timeSeries.setChartType('ScatterChart');
 timeSeries.setOptions({
   title: 'Pond Forecast',
   vAxis: {
-    title: 'Area (m$^$2)',
+    title: 'Area ($m^2$)',
   },
   lineWidth: 2,
   pointSize: 3,
