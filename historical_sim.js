@@ -193,10 +193,10 @@ timeSeries.setChartType('ScatterChart');
 timeSeries.setOptions({
   title: 'Pond Forecast',
   vAxis: {
-    title: '% Area Coverage',
+    title: 'Area (m$^$2)',
   },
-  lineWidth: 1,
-  pointSize: 4,
+  lineWidth: 2,
+  pointSize: 3,
   series: {
     0: 'red'
   }
@@ -300,7 +300,7 @@ var VAHChart =
       vAxis: {
         title: 'Area'
       },
-      pointSize: 2,
+      pointSize: 3,
     // trendlines: {
     //     0: {
     //       type: 'exponential',
@@ -326,12 +326,12 @@ var VAHChart1 =
       vAxis: {
         title: 'Fitted'
       },
-      pointSize: 2,
+      pointSize: 3,
       trendlines: {
             0: {
                 color: 'red',
                 lineWidth: 7,
-                opacity: 0.4,
+                opacity: 0.5,
             }
         },
     });
