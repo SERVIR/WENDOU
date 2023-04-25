@@ -358,6 +358,8 @@ var rmse = ee.Number(
 print('Area RMSE=', rmse);
 
 
+print('samples', samples.limit(10));
+
 // volume-height
 // Prepare the chart.
 var VAHChart =
