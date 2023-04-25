@@ -322,7 +322,7 @@ wendou = wendou.map(function (img) {
     reducer: ee.Reducer.mean(),
     scale: 30,
     maxPixels: 1e9
-  });
+  }).get('area_modeled');
   return img.set('area_modeled', area_modeled);
 });
 
