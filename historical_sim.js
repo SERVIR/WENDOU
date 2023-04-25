@@ -232,9 +232,56 @@ var VAHChart =
         title: 'Area'
       },
       pointSize: 4,
+      // trendlines: {
+      //       0: {
+      //           color: 'CC0000'
+      //       }
+      //   },
     });
 
 print(VAHChart);
+
+
+
+wendou = wendou.map(function (img) {
+  var h = img.select('height');
+  var log_H = h.log().rename('log_H');
+  var a = img.select('area');
+  var log_A = a.log().rename('log_A');
+  return img.addBands(log_H).addBands(log_A).addBands(ee.Image.constant(1).rename('log_C1'));
+});
+
+
+// trend line would be
+// A = C1 (h) ^ alpha
+// this would be reduced to
+// log A = alpha * log h + log C1
+var independents = ee.List(['log_C1', 'log_H']);
+var dependent = ee.String('log_A');
+
+// Compute a linear trend.  This will have two bands: 'residuals' and 
+// a 2x1 (Array Image) band called 'coefficients'.
+// (Columns are for dependent variables)
+var trend = wendou.select(independents.add(dependent))
+    .reduce(ee.Reducer.linearRegression(independents.length(), 1));
+Map.addLayer(trend, {}, 'trend array image');
+
+
+
+// Add harmonic terms as new image bands.
+var hWendou = wendou.map(function(image) {
+    var powerFit  = ee.Image(ee.Number(constant)).multiply(
+      image.select('height').pow(ee.Image(ee.constant(alpha)))
+    );
+    return image.addBands(powerFit.rename('powerFit'));
+});
+
+// Fit the model.
+var trend = hWendou
+    .select(independents.add(dependent))
+    // The output of this reducer is a 4x1 array image.
+    .reduce(ee.Reducer.linearRegression(independents.length(),
+        1));
 
 
 /*---------------------------------------------------------------------------------------*/
