@@ -312,7 +312,7 @@ var VAHChart =
     // }
   });
 
-print(VAHChart);
+print('Area-height curve', VAHChart);
 
 // Prepare the chart.
 var VAHChart1 =
@@ -336,7 +336,7 @@ var VAHChart1 =
         },
     });
 
-print(VAHChart1);
+print('Area vs fitted', VAHChart1);
 
 var areaDiff = function(feature) {
   var diff = ee.Number(feature.get('area')).subtract(ee.Number(feature.get('area_modeled')));
@@ -355,7 +355,7 @@ var rmse = ee.Number(
 .sqrt();
 
 // Print the result.
-print('RMSE=', rmse);
+print('Area RMSE=', rmse);
 
 
 // volume-height
@@ -383,7 +383,7 @@ var VAHChart =
     // }
   });
 
-print(VAHChart);
+print('Volume-Height Chart', VAHChart);
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
