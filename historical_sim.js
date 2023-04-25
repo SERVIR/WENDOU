@@ -245,9 +245,9 @@ print(VAHChart);
 
 wendou = wendou.map(function (img) {
   var h = img.select('height');
-  var log_H = h.log().rename('log_H');
+  var log_H = h.log10().rename('log_H');
   var a = img.select('area');
-  var log_A = a.log().rename('log_A');
+  var log_A = a.log10().rename('log_A');
   return img.addBands(log_H).addBands(log_A).addBands(ee.Image.constant(0.001).rename('log_C'));
 });
 
@@ -272,15 +272,30 @@ var coefficients = trend.select('coefficients')
     .arrayFlatten([independents]);
 
 // Compute fitted values.
-var fitted = wendou.map(function(image) {
+wendou = wendou.map(function(image) {
     return image.addBands(
         image.select(independents)
         .multiply(coefficients)
         .reduce('sum')
-        .rename('fitted'));
+        .rename('log_fitted'));
 });
 
-print('fitted', fitted);
+wendou = wendou.map(function (img) {
+  return img.addBands(ee.Image(10).pow(image.select('log_fitted')).rename('fitted'));
+});
+
+print('wendou', wendou);
+
+// Plot the fitted model and the original data at the ROI.
+print(ui.Chart.image.series(
+        fitted.select(['fitted', 'area']), pond.geometry(), ee.Reducer
+        .mean(), 30)
+    .setSeriesNames(['fitted', 'area'])
+    .setOptions({
+        title: 'Modeled',
+        lineWidth: 1,
+        pointSize: 3,
+    }));
 
 // Compute the trend series.
 // var detrended = wendou.map(function(image) {
