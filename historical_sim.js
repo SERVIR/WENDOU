@@ -357,6 +357,34 @@ var rmse = ee.Number(
 // Print the result.
 print('RMSE=', rmse);
 
+
+// volume-height
+// Prepare the chart.
+var VAHChart =
+  ui.Chart.feature.groups(samples, 'height', 'volume', 'series')
+    .setChartType('ScatterChart')
+    .setOptions({
+      title: 'Pond: ID ' + pondId,
+      hAxis: {
+        title: 'Height'
+      },
+      vAxis: {
+        title: 'Volume'
+      },
+      pointSize: 3,
+    // trendlines: {
+    //     0: {
+    //       type: 'exponential',
+    //       visibleInLegend: true,
+    //       color: 'red',
+    //       lineWidth: 7,
+    //       opacity: 0.4,
+    //     }
+    // }
+  });
+
+print(VAHChart);
+
 /*---------------------------------------------------------------------------------------*/
 // Functions
 
