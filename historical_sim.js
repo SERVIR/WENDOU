@@ -204,42 +204,42 @@ timeSeries.setOptions({
 
 print(timeSeries);
 
-var wendouList = wendou.toList(wendou.size());
-var loc = pond.geometry().bounds().centroid(1);
-var samples = wendouList.map(function (img) {
-  img = ee.Image(img);
-  return img.sample({
-    region: loc,
-    scale: demScale
-  });
-});
-samples = ee.FeatureCollection(samples.flatten());
-samples = samples.flatten();
-Map.addLayer(samples, {}, 'samples');
-print('samples', samples);
+// var wendouList = wendou.toList(wendou.size());
+// var loc = pond.geometry().bounds().centroid(1);
+// var samples = wendouList.map(function (img) {
+//   img = ee.Image(img);
+//   return img.sample({
+//     region: loc,
+//     scale: demScale
+//   });
+// });
+// samples = ee.FeatureCollection(samples.flatten());
+// samples = samples.flatten();
+// Map.addLayer(samples, {}, 'samples');
+// print('samples', samples);
 
 
-// Prepare the chart.
-var VAHChart =
-  ui.Chart.feature.groups(samples, 'height', 'area', 'series')
-    .setChartType('ScatterChart')
-    .setOptions({
-      title: 'Pond: ID ' + pondId,
-      hAxis: {
-        title: 'Height'
-      },
-      vAxis: {
-        title: 'Area'
-      },
-      pointSize: 4,
-      // trendlines: {
-      //       0: {
-      //           color: 'CC0000'
-      //       }
-      //   },
-    });
+// // Prepare the chart.
+// var VAHChart =
+//   ui.Chart.feature.groups(samples, 'height', 'area', 'series')
+//     .setChartType('ScatterChart')
+//     .setOptions({
+//       title: 'Pond: ID ' + pondId,
+//       hAxis: {
+//         title: 'Height'
+//       },
+//       vAxis: {
+//         title: 'Area'
+//       },
+//       pointSize: 4,
+//       // trendlines: {
+//       //       0: {
+//       //           color: 'CC0000'
+//       //       }
+//       //   },
+//     });
 
-print(VAHChart);
+// print(VAHChart);
 
 
 
@@ -287,42 +287,53 @@ wendou = wendou.map(function (img) {
 print('wendou', wendou);
 
 // Plot the fitted model and the original data at the ROI.
-print(ui.Chart.image.series(
-        fitted.select(['fitted', 'area']), pond.geometry(), ee.Reducer
-        .mean(), 30)
-    .setSeriesNames(['fitted', 'area'])
+// print(ui.Chart.image.series(
+//         wendou.select(['fitted', 'area']), pond.geometry(), ee.Reducer
+//         .mean(), 30)
+//     .setSeriesNames(['fitted', 'area'])
+//     .setOptions({
+//         title: 'Modeled',
+//         lineWidth: 1,
+//         pointSize: 3,
+    // }));
+    
+
+var wendouList = wendou.toList(wendou.size());
+var loc = pond.geometry().bounds().centroid(1);
+var samples = wendouList.map(function (img) {
+  img = ee.Image(img);
+  return img.sample({
+    region: loc,
+    scale: demScale
+  });
+});
+samples = ee.FeatureCollection(samples.flatten());
+samples = samples.flatten();
+Map.addLayer(samples, {}, 'samples');
+print('samples', samples.limit(10));
+
+
+// Prepare the chart.
+var VAHChart =
+  ui.Chart.feature.groups(samples, 'height', 'area', 'series')
+    .setChartType('ScatterChart')
     .setOptions({
-        title: 'Modeled',
-        lineWidth: 1,
-        pointSize: 3,
-    }));
+      title: 'Pond: ID ' + pondId,
+      hAxis: {
+        title: 'Height'
+      },
+      vAxis: {
+        title: 'Area'
+      },
+      pointSize: 4,
+      // trendlines: {
+      //       0: {
+      //           color: 'CC0000'
+      //       }
+      //   },
+    });
 
-// Compute the trend series.
-// var detrended = wendou.map(function(image) {
-//     return ee.Image.constant(alpha).multiply(image.select('log_H'))image.select(image.select(dependent).subtract(
-//             image.select(independents).multiply(coefficients)
-//             .reduce('sum'))
-//         .rename(dependent)
-//         .copyProperties(image, ['system:time_start']);
-// });
-
-
-
-// // Add harmonic terms as new image bands.
-// var hWendou = wendou.map(function(image) {
-//     var powerFit  = ee.Image(ee.Number(constant)).multiply(
-//       image.select('height').pow(ee.Image(ee.constant(alpha)))
-//     );
-//     return image.addBands(powerFit.rename('powerFit'));
-// });
-
-// // Fit the model.
-// var trend = hWendou
-//     .select(independents.add(dependent))
-//     // The output of this reducer is a 4x1 array image.
-//     .reduce(ee.Reducer.linearRegression(independents.length(),
-//         1));
-
+print(VAHChart);
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
