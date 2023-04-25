@@ -268,20 +268,20 @@ Map.addLayer(trend, {}, 'trend array image');
 
 
 
-// Add harmonic terms as new image bands.
-var hWendou = wendou.map(function(image) {
-    var powerFit  = ee.Image(ee.Number(constant)).multiply(
-      image.select('height').pow(ee.Image(ee.constant(alpha)))
-    );
-    return image.addBands(powerFit.rename('powerFit'));
-});
+// // Add harmonic terms as new image bands.
+// var hWendou = wendou.map(function(image) {
+//     var powerFit  = ee.Image(ee.Number(constant)).multiply(
+//       image.select('height').pow(ee.Image(ee.constant(alpha)))
+//     );
+//     return image.addBands(powerFit.rename('powerFit'));
+// });
 
-// Fit the model.
-var trend = hWendou
-    .select(independents.add(dependent))
-    // The output of this reducer is a 4x1 array image.
-    .reduce(ee.Reducer.linearRegression(independents.length(),
-        1));
+// // Fit the model.
+// var trend = hWendou
+//     .select(independents.add(dependent))
+//     // The output of this reducer is a 4x1 array image.
+//     .reduce(ee.Reducer.linearRegression(independents.length(),
+//         1));
 
 
 /*---------------------------------------------------------------------------------------*/
