@@ -180,6 +180,7 @@ var pondPct = modelOut.select('area').map(function(img) {
 //   });
 // }
 
+print('Temporal Trend of the Surface Area Extent');
 var timeSeries = ui.Chart.image.seriesByRegion({
   imageCollection: wendou,
   regions: pond.geometry(),
@@ -191,9 +192,9 @@ var timeSeries = ui.Chart.image.seriesByRegion({
 });
 timeSeries.setChartType('ScatterChart');
 timeSeries.setOptions({
-  title: 'Pond Forecast',
+  title: 'Pond Area vs time',
   vAxis: {
-    title: 'Area ($m^2$)',
+    title: 'Area (m^2)',
   },
   lineWidth: 2,
   pointSize: 3,
@@ -394,6 +395,34 @@ var VAHChart =
     //     }
     // }
   });
+
+
+
+print('Temporal Trend of the Volume');
+
+var timeSeries = ui.Chart.image.seriesByRegion({
+  imageCollection: wendou,
+  regions: pond.geometry(),
+  reducer: ee.Reducer.mean(),
+  band: 'vol',
+  scale: demScale,
+  xProperty: 'system:time_start',
+  seriesProperty: 'label'
+});
+timeSeries.setChartType('ScatterChart');
+timeSeries.setOptions({
+  title: 'Pond volume vs time',
+  vAxis: {
+    title: 'Volume (m^3)',
+  },
+  lineWidth: 2,
+  pointSize: 3,
+  series: {
+    0: 'red'
+  }
+});
+
+print(timeSeries);
 
 print('Volume-Height Chart', VAHChart);
 
