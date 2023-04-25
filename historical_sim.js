@@ -234,8 +234,6 @@ var coefficients = trend.select('coefficients')
     .arrayProject([0])
     .arrayFlatten([independents]);
 
-print('coefficients', coefficients);
-
 // Compute fitted values.
 wendou = wendou.map(function(image) {
     return image.addBands(
@@ -249,30 +247,30 @@ wendou = wendou.map(function (img) {
   return img.addBands(ee.Image(10).pow(img.select('log_fitted')).rename('area_modeled'));
 });
 
-wendou = wendou.map(function (img) {
-  var height = img.select('height').reduceRegion({
-    geometry: pond.geometry(),
-    reducer: ee.Reducer.mean(),
-    scale: 30,
-    maxPixels: 1e9
-  }).get('height');
+// wendou = wendou.map(function (img) {
+//   var height = img.select('height').reduceRegion({
+//     geometry: pond.geometry(),
+//     reducer: ee.Reducer.mean(),
+//     scale: 30,
+//     maxPixels: 1e9
+//   }).get('height');
   
-  var area = img.select('area').reduceRegion({
-    geometry: pond.geometry(),
-    reducer: ee.Reducer.mean(),
-    scale: 30,
-    maxPixels: 1e9
-  }).get('area');
+//   var area = img.select('area').reduceRegion({
+//     geometry: pond.geometry(),
+//     reducer: ee.Reducer.mean(),
+//     scale: 30,
+//     maxPixels: 1e9
+//   }).get('area');
   
-  var area_modeled = img.select('area_modeled').reduceRegion({
-    geometry: pond.geometry(),
-    reducer: ee.Reducer.mean(),
-    scale: 30,
-    maxPixels: 1e9
-  }).get('area_modeled');
+//   var area_modeled = img.select('area_modeled').reduceRegion({
+//     geometry: pond.geometry(),
+//     reducer: ee.Reducer.mean(),
+//     scale: 30,
+//     maxPixels: 1e9
+//   }).get('area_modeled');
 
-  return img.set('height', height, 'area', area, 'area_modeled', area_modeled);
-});
+//   return img.set('height', height, 'area', area, 'area_modeled', area_modeled);
+// });
 
 print('wendou', wendou);
     
