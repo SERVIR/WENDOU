@@ -211,7 +211,9 @@ wendou = wendou.map(function (img) {
   var log_H = h.log10().rename('log_H');
   var a = img.select('area');
   var log_A = a.log10().rename('log_A');
-  return img.addBands(log_H).addBands(log_A).addBands(ee.Image.constant(0.001).rename('log_C'));
+  var vol = img.select('vol');
+  var log_V = vol.log10().rename('log_V');
+  return img.addBands(log_H).addBands(log_A).addBands(log_V).addBands(ee.Image.constant(0.001).rename('log_C'));
 });
 
 
@@ -240,11 +242,11 @@ wendou = wendou.map(function(image) {
         image.select(independents)
         .multiply(coefficients)
         .reduce('sum')
-        .rename('log_fitted'));
+        .rename('log_fitted_area'));
 });
 
 wendou = wendou.map(function (img) {
-  return img.addBands(ee.Image(10).pow(img.select('log_fitted')).rename('area_modeled'));
+  return img.addBands(ee.Image(10).pow(img.select('log_fitted_area')).rename('area_modeled'));
 });
 
 // wendou = wendou.map(function (img) {
@@ -341,14 +343,14 @@ print('Area vs fitted', VAHChart1);
 var areaDiff = function(feature) {
   var diff = ee.Number(feature.get('area')).subtract(ee.Number(feature.get('area_modeled')));
   // Return the feature with the squared difference set to the 'diff' property.
-  return feature.set('diff', diff.pow(2));
+  return feature.set('area_diff', diff.pow(2));
 };
 
 var rmse = ee.Number(
   // Map the difference function over the collection.
   samples.map(areaDiff)
   // Reduce to get the mean squared difference.
-  .reduceColumns(ee.Reducer.mean(), ['diff'])
+  .reduceColumns(ee.Reducer.mean(), ['area_diff'])
   .get('mean')
 )
 // Compute the square root of the mean square to get RMSE.
@@ -357,13 +359,10 @@ var rmse = ee.Number(
 // Print the result.
 print('Area RMSE=', rmse);
 
-
-print('samples', samples.limit(10));
-
 // volume-height
 // Prepare the chart.
 var VAHChart =
-  ui.Chart.feature.groups(samples, 'height', 'volume', 'series')
+  ui.Chart.feature.groups(samples, 'height', 'vol', 'series')
     .setChartType('ScatterChart')
     .setOptions({
       title: 'Pond: ID ' + pondId,
@@ -386,6 +385,86 @@ var VAHChart =
   });
 
 print('Volume-Height Chart', VAHChart);
+
+
+
+
+
+// trend line would be
+// V = C (h) ^ alpha
+// this would be reduced to
+// log V = alpha * log h + log C
+var independents = ee.List(['log_C', 'log_H']);
+var dependent = ee.String('log_V');
+
+// Compute a linear trend.  This will have two bands: 'residuals' and 
+// a 2x1 (Array Image) band called 'coefficients'.
+// (Columns are for dependent variables)
+var trend = wendou.select(independents.add(dependent))
+    .reduce(ee.Reducer.linearRegression(independents.length(), 1));
+
+// Flatten the coefficients into a 2-band image.
+var coefficients = trend.select('coefficients')
+    // Get rid of extra dimensions and convert back to a regular image
+    .arrayProject([0])
+    .arrayFlatten([independents]);
+
+// Compute fitted values.
+wendou = wendou.map(function(image) {
+    return image.addBands(
+        image.select(independents)
+        .multiply(coefficients)
+        .reduce('sum')
+        .rename('log_fitted_vol'));
+});
+
+wendou = wendou.map(function (img) {
+  return img.addBands(ee.Image(10).pow(img.select('log_fitted_vol')).rename('vol_modeled'));
+});
+
+
+// Prepare the chart.
+var VAHChart1 =
+  ui.Chart.feature.groups(samples, 'vol', 'vol_modeled', 'series')
+    .setChartType('ScatterChart')
+    .setOptions({
+      title: 'Pond: ID ' + pondId,
+      hAxis: {
+        title: 'Volume'
+      },
+      vAxis: {
+        title: 'Fitted Volume'
+      },
+      pointSize: 3,
+      trendlines: {
+            0: {
+                color: 'red',
+                lineWidth: 7,
+                opacity: 0.5,
+            }
+        },
+    });
+
+print('Volumne vs fitted', VAHChart1);
+
+var volDiff = function(feature) {
+  var diff = ee.Number(feature.get('vol')).subtract(ee.Number(feature.get('vol_modeled')));
+  // Return the feature with the squared difference set to the 'diff' property.
+  return feature.set('diff_vol', diff.pow(2));
+};
+
+var rmse = ee.Number(
+  // Map the difference function over the collection.
+  samples.map(volDiff)
+  // Reduce to get the mean squared difference.
+  .reduceColumns(ee.Reducer.mean(), ['diff_vol'])
+  .get('mean')
+)
+// Compute the square root of the mean square to get RMSE.
+.sqrt();
+
+// Print the result.
+print('Volume RMSE=', rmse);
 
 /*---------------------------------------------------------------------------------------*/
 // Functions
