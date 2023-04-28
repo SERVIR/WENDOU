@@ -24,7 +24,7 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-ponds = table;
+// ponds = table;
 
 // Original author: K. Markert
 // Based on Soti et al. (2010) --> https://hess.copernicus.org/articles/14/1449/2010/hess-14-1449-2010.pdf
