@@ -20,8 +20,12 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     chirps = ee.ImageCollection("UCSB-CHG/CHIRPS/DAILY"),
     volumne_pt = /* color: #d63000 */ee.Geometry.MultiPoint(),
     lc8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA"),
-    wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019");
+    wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019"),
+    table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+// ponds = table;
+
 // Original author: K. Markert
 // Based on Soti et al. (2010) --> https://hess.copernicus.org/articles/14/1449/2010/hess-14-1449-2010.pdf
 // Edited by: Biplov Bhandari . SCO (4/25/2023)
@@ -36,14 +40,15 @@ print("DEM resolution", demScale);
 Map.addLayer(elv, {min: 40, max: 70}, 'dem_2m');
 // var studyArea = ee.Geometry.Rectangle([-180,-60,180,85])//mk_pond.buffer(10000,100).geometry()
 
-var forecastDays = 365;
+var forecastDays = 75;
 var initDate = ee.Date('2021-01-01');//ee.Date(date); 
-
-var pondId = 75; /// test case was #1
+print('ponds', ponds);
+var pondId = 1103; /// test case was #1
 
 var pond = ee.Feature(ponds.filter(ee.Filter.eq('uniqID', pondId)).first());
 print("Sample pond geometry", pond.geometry());
 Map.centerObject(pond, 14);
+Map.addLayer(ponds, {}, 'ponds');
 
 var initImg = ee.Image(lc8.filterBounds(pond.geometry()).filterDate(initDate.advance(-20, 'day'),initDate.advance(1, 'day')).sort('system:time_start',false).first());
 print('initImg', initImg);
