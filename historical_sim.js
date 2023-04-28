@@ -24,7 +24,7 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-// ponds = table;
+ponds = table;
 
 // Original author: K. Markert
 // Based on Soti et al. (2010) --> https://hess.copernicus.org/articles/14/1449/2010/hess-14-1449-2010.pdf
@@ -40,10 +40,10 @@ print("DEM resolution", demScale);
 Map.addLayer(elv, {min: 40, max: 70}, 'dem_2m');
 // var studyArea = ee.Geometry.Rectangle([-180,-60,180,85])//mk_pond.buffer(10000,100).geometry()
 
-var forecastDays = 75;
+var forecastDays = 365;
 var initDate = ee.Date('2021-01-01');//ee.Date(date); 
 print('ponds', ponds);
-var pondId = 1103; /// test case was #1
+var pondId = 75; /// test case was #1
 
 var pond = ee.Feature(ponds.filter(ee.Filter.eq('uniqID', pondId)).first());
 print("Sample pond geometry", pond.geometry());
