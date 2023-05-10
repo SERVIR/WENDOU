@@ -35,7 +35,7 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
 var elv_org = ee.ImageCollection("projects/servir-wa/SETSM_dem/SETSM_dem2").mosaic().select(["b1"], ["elevation"]);
 var elv = elv_org.reproject(ee.Projection('EPSG:4326').atScale(2));
 
-elv = srtm.select('elevation');
+// elv = srtm.select('elevation');
 
 var demScale = elv.projection().nominalScale(); 
 print("DEM resolution", demScale);
