@@ -21,7 +21,8 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     volumne_pt = /* color: #d63000 */ee.Geometry.MultiPoint(),
     lc8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA"),
     wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019"),
-    table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds");
+    table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds"),
+    srtm = ee.Image("CGIAR/SRTM90_V4");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // ponds = table;
@@ -33,6 +34,9 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
 
 var elv_org = ee.ImageCollection("projects/servir-wa/SETSM_dem/SETSM_dem2").mosaic().select(["b1"], ["elevation"]);
 var elv = elv_org.reproject(ee.Projection('EPSG:4326').atScale(2));
+
+elv = srtm.select('elevation');
+
 var demScale = elv.projection().nominalScale(); 
 print("DEM resolution", demScale);
 
