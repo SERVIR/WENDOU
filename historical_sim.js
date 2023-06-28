@@ -24,6 +24,7 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds"),
     srtm = ee.Image("CGIAR/SRTM90_V4");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+print('ponds', ponds);
 
 // ponds = table;
 
