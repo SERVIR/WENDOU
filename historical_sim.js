@@ -22,7 +22,8 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     lc8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA"),
     wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019"),
     table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds"),
-    srtm = ee.Image("CGIAR/SRTM90_V4");
+    srtm = ee.Image("CGIAR/SRTM90_V4"),
+    org_ponds = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/original_ponds");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 print('ponds', ponds);
 
@@ -614,3 +615,6 @@ Map.addLayer(z, {color: 'green'}, 'all_pts_ea', false)
 
 var zz = ee.FeatureCollection('users/rocksstar/locations_338')
 Map.addLayer(zz, {color: 'green'}, 'all_pts')
+
+
+Map.addLayer(org_ponds, {}, 'org_ponds');
