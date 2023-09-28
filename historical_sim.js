@@ -603,3 +603,14 @@ function calcInitIapWithChirps(collection, pastDays) {
 
 Map.addLayer(pond, {color: 'red'}, 'pond');
 Map.centerObject(pond, 13);
+
+
+
+var y  = ee.FeatureCollection('users/rocksstar/20220607_FromErwann_ToShpFile')
+Map.addLayer(y, {color: 'red'}, 'pts')
+
+var z = ee.FeatureCollection('users/rocksstar/USGSWP')
+Map.addLayer(z, {color: 'green'}, 'all_pts_ea', false)
+
+var zz = ee.FeatureCollection('users/rocksstar/locations_338')
+Map.addLayer(zz, {color: 'green'}, 'all_pts')
