@@ -618,3 +618,5 @@ Map.addLayer(zz, {color: 'green'}, 'all_pts')
 
 
 Map.addLayer(org_ponds, {}, 'org_ponds');
+
+var x  = ee.FeatureCollection('users/kkgcp/pond_NewPts_202303')
