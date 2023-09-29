@@ -57,6 +57,8 @@ print('pond', pond);
 var pond = ee.Feature(ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite").first());
 print('pond', pond);
 
+Map.addLayer(pond, {color: 'red'}, 'pond');
+
 print("Sample pond geometry", pond.geometry());
 Map.centerObject(pond, 14);
 Map.addLayer(ponds, {}, 'ponds');
