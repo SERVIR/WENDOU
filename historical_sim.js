@@ -615,7 +615,7 @@ function calcInitIapWithChirps(collection, pastDays) {
 
 
 Map.addLayer(pond, {color: 'red'}, 'pond');
-Map.centerObject(pond, 20);
+Map.centerObject(pond, 18);
 
 
 
