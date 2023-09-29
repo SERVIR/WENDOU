@@ -52,8 +52,10 @@ print('ponds', ponds);
 var pondId = 75; /// test case was #1
 
 var pond = ee.Feature(ponds.filter(ee.Filter.eq('uniqID', pondId)).first());
+print('pond', pond);
 
-var pond = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite");
+var pond = ee.Feature(ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite").first());
+print('pond', pond);
 
 print("Sample pond geometry", pond.geometry());
 Map.centerObject(pond, 14);
