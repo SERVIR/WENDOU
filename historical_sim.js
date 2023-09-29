@@ -620,3 +620,8 @@ Map.addLayer(zz, {color: 'green'}, 'all_pts')
 Map.addLayer(org_ponds, {}, 'org_ponds');
 
 var x  = ee.FeatureCollection('users/kkgcp/pond_NewPts_202303')
+
+
+var dem_new = ee.Image("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite_dem")
+Map.addLayer(dem_new, {}, 'dem_new')
+// Map.centerObject(dem_new);
