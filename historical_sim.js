@@ -35,7 +35,11 @@ print('ponds', ponds);
 // This script uses historical CHIRPS for 2019 to derive the Area-Height Relationship.
 
 var elv_org = ee.ImageCollection("projects/servir-wa/SETSM_dem/SETSM_dem2").mosaic().select(["b1"], ["elevation"]);
+
 var elv = elv_org.reproject(ee.Projection('EPSG:4326').atScale(2));
+
+var dem_new = ee.Image("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite_dem").select(["b1"], ["elevation"]);
+var elv = dem_new.reproject(ee.Projection('EPSG:4326').atScale(0.5));
 
 // elv = srtm.select('elevation');
 
@@ -630,9 +634,9 @@ Map.addLayer(org_ponds, {}, 'org_ponds');
 var x  = ee.FeatureCollection('users/kkgcp/pond_NewPts_202303')
 
 
-var dem_new = ee.Image("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite_dem")
-Map.addLayer(dem_new, {'min':49, 'max':60}, 'dem_new')
-Map.centerObject(dem_new);
+// var dem_new = ee.Image("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite_dem")
+// Map.addLayer(dem_new, {'min':49, 'max':60}, 'dem_new')
+// Map.centerObject(dem_new);
 
 
 
