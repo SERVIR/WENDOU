@@ -70,7 +70,7 @@ print('initImg time', t);
 
 // MNDWI on L8 with B3 (green) and B7 (SWIR2)
 var initWater = initImg.normalizedDifference(['B3', 'B7']).gt(-0.2); // >-0.2 is a low threshold for MNDWI, potential overestimate of water?
-var initWater = initImg.normalizedDifference(['B3', 'B7']).gt(-0.15);
+var initWater = initImg.normalizedDifference(['B3', 'B7']).gt(-0.30);
 Map.addLayer(initImg.normalizedDifference(['B3', 'B7']), {bands: 'nd', min: -0.4, max: -0.01}, 'MNDWI', false);
 
 var initPct = ee.Number(initWater.reduceRegion({
