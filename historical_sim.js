@@ -191,7 +191,7 @@ var pondPct = modelOut.select('area').map(function(img) {
 
 // var modelOutLists = modelOut.toList(modelOut.size());
 
-// for (var i=300; i<=forecastDays; i++) {
+// for (var i=0; i<=forecastDays; i++) {
 //   var img = ee.Image(modelOutLists.get(i));
 //   Export.image.toAsset({
 //     image: img,
