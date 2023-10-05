@@ -38,8 +38,8 @@ var elv_org = ee.ImageCollection("projects/servir-wa/SETSM_dem/SETSM_dem2").mosa
 
 var elv = elv_org.reproject(ee.Projection('EPSG:4326').atScale(2));
 
-var dem_new = ee.Image("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite_dem").select(["b1"], ["elevation"]);
-var elv = dem_new.reproject(ee.Projection('EPSG:4326').atScale(0.5));
+// var dem_new = ee.Image("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite_dem").select(["b1"], ["elevation"]);
+// var elv = dem_new.reproject(ee.Projection('EPSG:4326').atScale(0.5));
 
 // elv = srtm.select('elevation');
 
@@ -58,8 +58,8 @@ var pondId = 75; /// test case was #1
 var pond = ee.Feature(ponds.filter(ee.Filter.eq('uniqID', pondId)).first());
 print('pond', pond);
 
-var pond = ee.Feature(ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite").first());
-print('pond', pond);
+// var pond = ee.Feature(ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite").first());
+// print('pond', pond);
 
 Map.addLayer(pond, {color: 'red'}, 'pond');
 
