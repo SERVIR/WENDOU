@@ -614,24 +614,24 @@ function calcInitIapWithChirps(collection, pastDays) {
 }
 
 
-Map.addLayer(pond, {color: 'red'}, 'pond');
-Map.centerObject(pond, 18);
+// Map.addLayer(pond, {color: 'red'}, 'pond');
+// Map.centerObject(pond, 18);
 
 
 
-var y  = ee.FeatureCollection('users/rocksstar/20220607_FromErwann_ToShpFile')
-Map.addLayer(y, {color: 'red'}, 'pts')
+// var y  = ee.FeatureCollection('users/rocksstar/20220607_FromErwann_ToShpFile')
+// Map.addLayer(y, {color: 'red'}, 'pts')
 
-var z = ee.FeatureCollection('users/rocksstar/USGSWP')
-Map.addLayer(z, {color: 'green'}, 'all_pts_ea', false)
+// var z = ee.FeatureCollection('users/rocksstar/USGSWP')
+// Map.addLayer(z, {color: 'green'}, 'all_pts_ea', false)
 
-var zz = ee.FeatureCollection('users/rocksstar/locations_338')
-Map.addLayer(zz, {color: 'green'}, 'all_pts')
+// var zz = ee.FeatureCollection('users/rocksstar/locations_338')
+// Map.addLayer(zz, {color: 'green'}, 'all_pts')
 
 
-Map.addLayer(org_ponds, {}, 'org_ponds');
+// Map.addLayer(org_ponds, {}, 'org_ponds');
 
-var x  = ee.FeatureCollection('users/kkgcp/pond_NewPts_202303')
+// var x  = ee.FeatureCollection('users/kkgcp/pond_NewPts_202303')
 
 
 // var dem_new = ee.Image("projects/servir-wa/services/ephemeral_water_ferlo/Dogade_limite_dem")
