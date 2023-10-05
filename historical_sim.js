@@ -243,9 +243,10 @@ wendou = wendou.map(function (img) {
 // Areal Trend Line
 
 // trend line would be
-// A = C (h) ^ alpha
+// A = C (h) ^ alpha // logarithm 
 // this would be reduced to
 // log A = alpha * log h + log C
+// y = slope * x + intercept (c)
 var independents = ee.List(['log_C', 'log_H']);
 var dependent = ee.String('log_A');
 
