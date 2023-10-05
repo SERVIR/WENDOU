@@ -65,7 +65,7 @@ Map.addLayer(pond, {color: 'red'}, 'pond');
 
 print("Sample pond geometry", pond.geometry());
 Map.centerObject(pond, 14);
-Map.addLayer(ponds, {}, 'ponds');
+Map.addLayer(ponds, {}, 'ponds', false);
 
 var initImg = ee.Image(lc8.filterBounds(pond.geometry()).filterDate(initDate.advance(-20, 'day'),initDate.advance(1, 'day')).sort('system:time_start',false).first());
 print('initImg', initImg);
