@@ -1,0 +1,50 @@
+name: pull from GEE
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: grant access
+        env:
+          GIT_COOKIE_VALUE: ${{ secrets.GIT_COOKIE_VALUE }}
+        run: |
+          touch ~/.gitcookies
+          chmod 0600 ~/.gitcookies
+          echo earthengine.googlesource.com,FALSE,/,TRUE,2147483647,o,${GIT_COOKIE_VALUE} | tr  , \\t >>~/.gitcookies
+          git config --global http.postBuffer 157286400
+
+      - name: config git
+        run: |
+          git config http.cookiefile ~/.gitcookies
+          git config http.postBuffer 157286400
+          git config user.email "githubActionAutoMerge@no-one.com"
+          git config user.name "githubActionAutoMerge"
+          git config pull.rebase false
+
+      - name: mirror the gee git repo
+        env:
+          GEE_REPO: ${{ secrets.GEE_REPO }}
+        run: |
+          # Create the gee-repo directory if it doesn't exist
+          mkdir -p gee-repo
+          cd gee-repo
+
+          # Initialize as a Git repo only if it's not already one
+          if [ ! -d ".git" ]; then
+            git init
+          fi
+
+          # Add the remote only if it hasn't been added before
+          if ! git remote | grep -q 'origin'; then
+            git remote add origin https://earthengine.googlesource.com/${GEE_REPO}
+          fi
+
+          git pull https://earthengine.googlesource.com/${GEE_REPO} master --allow-unrelated-histories || bash -c "git checkout --theirs . ; git add -u ; git commit -m 'autoMerge'"
+          git push https://earthengine.googlesource.com/${GEE_REPO} master
