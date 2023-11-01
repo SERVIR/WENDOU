@@ -52,6 +52,8 @@ jobs:
 
       - name: commit gee-repo changes
         run: |
+          cd gee-repo
+          echo "ls -la"
           # Commit any changes that were pulled into gee-repo
           git add .
           git commit -m "Update gee-repo with latest changes from GEE_REPO"
