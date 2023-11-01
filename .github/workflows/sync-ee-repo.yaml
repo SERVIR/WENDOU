@@ -1,4 +1,4 @@
-name: pull from GEE
+name: sync gee repo
 
 on:
   # Allows you to run this workflow manually from the Actions tab
@@ -22,13 +22,12 @@ jobs:
 
       - name: config git
         run: |
-          git config http.cookiefile ~/.gitcookies
-          git config http.postBuffer 157286400
-          git config user.email "githubActionAutoMerge@no-one.com"
-          git config user.name "githubActionAutoMerge"
-          git config pull.rebase false
+          git config --global http.cookiefile ~/.gitcookies
+          git config --global user.email "githubActionAutoMerge@no-one.com"
+          git config --global user.name "githubActionAutoMerge"
+          git config --global pull.rebase false
 
-      - name: mirror the gee git repo
+      - name: sync gee git repo
         env:
           GEE_REPO: ${{ secrets.GEE_REPO }}
         run: |
