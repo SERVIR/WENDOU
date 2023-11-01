@@ -32,21 +32,21 @@ jobs:
           GEE_REPO: ${{ secrets.GEE_REPO }}
         run: |
           # Create the gee-repo directory if it doesn't exist
-          mkdir -p gee-repo
-          cd gee-repo
+          # mkdir -p gee-repo
+          # cd gee-repo
 
           # Initialize as a Git repo only if it's not already one
-          if [ ! -d ".git" ]; then
-            git init
-          fi
+          # if [ ! -d ".git" ]; then
+          #   git init
+          # fi
 
-          # Add the remote only if it hasn't been added before
-          if ! git remote | grep -q 'origin'; then
-            git remote add origin https://earthengine.googlesource.com/${GEE_REPO}
-          fi
+          # # Add the remote only if it hasn't been added before
+          # if ! git remote | grep -q 'origin'; then
+          #   git remote add origin https://earthengine.googlesource.com/${GEE_REPO}
+          # fi
 
           # Pull the latest changes from the external GEE_REPO
-          git pull https://earthengine.googlesource.com/${GEE_REPO} master --allow-unrelated-histories || bash -c "git checkout --theirs . ; git add -u ; git commit -m 'autoMerge'"
+          git pull https://earthengine.googlesource.com/${GEE_REPO}.git master --allow-unrelated-histories || bash -c "git checkout --theirs . ; git add -u ; git commit -m 'autoMerge'"
 
           # Push the changes back to the external GEE_REPO if there were any; ideally this won't change anything
           # git push https://earthengine.googlesource.com/${GEE_REPO} master
