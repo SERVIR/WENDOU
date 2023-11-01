@@ -52,8 +52,8 @@ jobs:
           # git push https://earthengine.googlesource.com/${GEE_REPO} master
 
           # Commit any changes that were pulled into gee-repo
-          git add .
-          git commit -m "Update gee-repo with latest changes from GEE_REPO"
+          # git add .
+          # git commit -m "Update gee-repo with latest changes from GEE_REPO"
 
           # Push the commit to the main GitHub repository
-          git push origin HEAD:main
+          git push
