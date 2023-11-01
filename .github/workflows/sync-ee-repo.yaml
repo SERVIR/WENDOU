@@ -2,6 +2,7 @@ name: sync gee repo
 
 on:
   # Allows you to run this workflow manually from the Actions tab
+  # Generate GIT_COOKIE_VALUE from https://earthengine.googlesource.com/new-password
   workflow_dispatch:
 
 jobs:
