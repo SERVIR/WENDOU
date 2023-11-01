@@ -52,11 +52,16 @@ jobs:
 
       - name: commit gee-repo changes
         run: |
-          # Commit any changes that were pulled into gee-repo
-          git add gee-repo
-          git commit -m "Update gee-repo with latest changes from GEE_REPO"
+          # Change to the gee-repo directory
+          cd gee-repo
 
-      - name: push changes to GitHub
-        run: |
-          # Push the commit to the main GitHub repository
-          git push origin HEAD:main
+          # Check for any changes. If changes exist, commit them.
+          if ! git diff --quiet; then
+            git add .
+            git commit -m "Update gee-repo with latest changes from GEE_REPO"
+
+            # Push the commit to the GitHub repository
+            git push origin HEAD:master
+          else
+            echo "No changes to commit."
+          fi
