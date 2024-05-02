@@ -9,7 +9,7 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
         {
           "system:index": "0"
         }),
-    studyArea = 
+    studyArea =
     /* color: #d63000 */
     /* shown: false */
     ee.Geometry.Polygon(
@@ -20,10 +20,11 @@ var ponds = ee.FeatureCollection("users/kelmarkert/public/ferloPonds"),
     chirps = ee.ImageCollection("UCSB-CHG/CHIRPS/DAILY"),
     volumne_pt = /* color: #d63000 */ee.Geometry.MultiPoint(),
     lc8 = ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA"),
-    wendou = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019"),
+    wendou_ = ee.ImageCollection("users/biplovbhandari/UAH/Wendou_2019"),
     table = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/ferlo_ponds"),
     srtm = ee.Image("CGIAR/SRTM90_V4"),
-    org_ponds = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/original_ponds");
+    org_ponds = ee.FeatureCollection("projects/servir-wa/services/ephemeral_water_ferlo/original_ponds"),
+    wendou = ee.ImageCollection("projects/servir-wa/services/ephemeral_water_ferlo/hydro_model_output/2023");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 print('ponds', ponds);
 
@@ -43,7 +44,7 @@ var elv = elv_org.reproject(ee.Projection('EPSG:4326').atScale(2));
 
 // elv = srtm.select('elevation');
 
-var demScale = elv.projection().nominalScale(); 
+var demScale = elv.projection().nominalScale();
 print("DEM resolution", demScale);
 
 
@@ -51,7 +52,7 @@ Map.addLayer(elv, {min: 40, max: 70}, 'dem_2m');
 // var studyArea = ee.Geometry.Rectangle([-180,-60,180,85])//mk_pond.buffer(10000,100).geometry()
 
 var forecastDays = 365;
-var initDate = ee.Date('2021-01-01');//ee.Date(date); 
+var initDate = ee.Date('2023-01-01');//ee.Date(date);
 print('ponds', ponds);
 var pondId = 75; /// test case was #1
 
@@ -91,9 +92,9 @@ print("initPct", initPct);
 
 /* ----- model parameterization ----- */
 // water balance parameters [from Soti el al. (2010), Table 2]
-var k = ee.Image(0.9);            // dimensionless | coefficient expressing soil moisture decrease in time | ranges: 0-1 
+var k = ee.Image(0.9);            // dimensionless | coefficient expressing soil moisture decrease in time | ranges: 0-1
 var Gmax = ee.Image(0.01487);     // m/day | rainfall threshold value start runoff in dry soils | ranges: 0.01-0.02
-var L = ee.Image(0.00114);// ***  // m/day | water loss per day | range: 0.005-0.02 
+var L = ee.Image(0.00114);// ***  // m/day | water loss per day | range: 0.005-0.02
 var Kr = ee.Image(0.4946);        // dimensionless | runoff coefficient | range = 0.15-0.40
 var n = ee.Image(19.89);          // dimensionless | # times catchment area of small pond is larger than the max pond surface area | range: 1-20
 var Ac = n.multiply(pond.area()); // sq m | catchement area | range: 0-150,000,000
@@ -144,7 +145,7 @@ var vInit = ee.Image((Vo.multiply(hInit.divide(ho)).pow(alpha.add(1)))); // Eq 7
 var currentExtent = A.reduceRegion({geometry:pond.geometry(), reducer:ee.Reducer.first(), scale:30});
 print("Maxmum extent of pond:", pond.area()," m2 and current surface area extent: ", currentExtent.get('constant'), " m2");
 
-// set contants 
+// set contants
 // this was original scale; however this same scale works for CHIRPS coverting value from mm/day to m/day.
 var precipScale = ee.Image(1).divide(ee.Image(1e3));
 
@@ -153,7 +154,7 @@ var precipScale = ee.Image(1).divide(ee.Image(1e3));
 chirps = chirps.select(['precipitation'], ['precip']);
 var precipData = chirps.filterDate(t, t.advance(1, 'day')).filterBounds(studyArea);
 print("Precipitation Data", precipData);
-             
+
 // var dailyPrecip = accumChirps(precipData, t, forecastDays);
 var dailyPrecip = accumChirps(chirps, t, forecastDays);
 dailyPrecip = dailyPrecip.map(function (img) {
@@ -177,7 +178,7 @@ var first = ee.Image(chirps.filterDate(t.advance(-1, 'day'), t).first())
               .set('system:time_start', t.advance(-1, 'day').millis(), 'system:time_end', t.advance(-1, 'day').millis()).float();
 print("initial variables with (t-1) forcing", first);
 
-///////////////////////////////////////////////////////////////////////////////////////////////  // Initialize volume model              
+///////////////////////////////////////////////////////////////////////////////////////////////  // Initialize volume model
 var modelOut = ee.ImageCollection.fromImages(dailyPrecip.iterate(accumVolume, ee.List([first])));
 print("Model out", modelOut); // why is res of output the res of GFS (~27km2), rather than 30m Landsat res??
 
@@ -243,14 +244,14 @@ wendou = wendou.map(function (img) {
 // Areal Trend Line
 
 // trend line would be
-// A = C (h) ^ alpha // logarithm 
+// A = C (h) ^ alpha // logarithm
 // this would be reduced to
 // log A = alpha * log h + log C
 // y = slope * x + intercept (c)
 var independents = ee.List(['log_C', 'log_H']);
 var dependent = ee.String('log_A');
 
-// Compute a linear trend.  This will have two bands: 'residuals' and 
+// Compute a linear trend.  This will have two bands: 'residuals' and
 // a 2x1 (Array Image) band called 'coefficients'.
 // (Columns are for dependent variables)
 var trend = wendou.select(independents.add(dependent))
@@ -284,7 +285,7 @@ wendou = wendou.map(function (img) {
 var independents = ee.List(['log_C', 'log_H']);
 var dependent = ee.String('log_V');
 
-// Compute a linear trend.  This will have two bands: 'residuals' and 
+// Compute a linear trend.  This will have two bands: 'residuals' and
 // a 2x1 (Array Image) band called 'coefficients'.
 // (Columns are for dependent variables)
 var trend = wendou.select(independents.add(dependent))
@@ -311,7 +312,7 @@ wendou = wendou.map(function (img) {
 
 
 print('wendou', wendou);
-    
+
 
 var wendouList = wendou.toList(wendou.size());
 var loc = pond.geometry().bounds().centroid(1);
@@ -507,30 +508,30 @@ function accumVolume(img,list) {
   var pastVl = past.select('vol');
   var nowPr = img.select('precip');//.clip(studyArea);
   var date = ee.Date(img.get('system:time_start'));
-  
+
   // change in volume model
-  var deltaIt = pastIt.add(pastPr).multiply(k);                                // Eq 5 
-  var Gt = Gmax.subtract(deltaIt);                                             // Eq 4 
+  var deltaIt = pastIt.add(pastPr).multiply(k);                                // Eq 5
+  var Gt = Gmax.subtract(deltaIt);                                             // Eq 4
   Gt = Gt.where(Gt.lt(0),0);                                                   // Eq 4 (cont)
   var Pe = nowPr.subtract(Gt);                                                 // Eq 3
   Pe = Pe.where(Pe.lt(0),0);                                                   // Eq 3 (cont)
-  var Qin = Kr.multiply(Pe).multiply(Ac);                                      // Eq 2 
+  var Qin = Kr.multiply(Pe).multiply(Ac);                                      // Eq 2
   var dV = nowPr.multiply(pond.area()).add(Qin).subtract(L.multiply(pastAr));  // Eq 1 (Qout is assumed to be 0 in Ferlo use case)
-  
+
   // convert dV to actual volume (add change in volume to the initial volume to get volume at given t step)
   var volume = pastVl.add(dV).rename('vol');
   volume = volume.where(volume.lt(0), 0);
-  
+
   // empirical model for volume to area/height relationship
   var ht = ho.multiply(volume.divide(Vo).pow(ee.Image(1).divide(alpha.add(1)))).rename('height');
   ht = ht.where(ht.lt(0),0);
   var area = So.multiply(ht.divide(ho).pow(alpha)).rename('area'); //Eq 6
   area = area.where(area.lt(0),1); // constrain area to real values
-      
+
   // set state variables to output model step
   var step = nowPr.addBands(deltaIt).addBands(volume).addBands(area).addBands(ht)
               .set('system:time_start', date.advance(1, 'day').millis());
-  
+
   return ee.List(list).add(step.float());
 }
 
@@ -554,7 +555,7 @@ function accumGFS(collection,startDate,nDays) {
 }
 
 function accumChirps(collection, startDate, nDays) {
-  // chirps has daily values in it so 
+  // chirps has daily values in it so
   return ee.ImageCollection(collection.filterDate(startDate, startDate.advance(nDays, 'day')));
 }
 
@@ -584,7 +585,7 @@ function calcInitIap(collection, pastDays) {
 
   var imgList = dailyPrev.toList(pastDays);
   var outList = [];  //209-220 Eq 5
-  
+
   for (var i=0; i<pastDays; i++) {
     var pr = ee.Image(imgList.get(i));
     var antecedent = pr.multiply(ee.Image(1).divide(pastDays-i));
@@ -604,7 +605,7 @@ function calcInitIapWithChirps(collection, pastDays) {
 
   var imgList = dailyPrev.toList(pastDays);
   var outList = [];  //209-220 Eq 5
-  
+
   for (var i=0; i<pastDays; i++) {
     var pr = ee.Image(imgList.get(i));
     var antecedent = pr.multiply(ee.Image(1).divide(pastDays-i));
