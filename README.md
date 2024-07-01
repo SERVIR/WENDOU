@@ -8,5 +8,6 @@ West Africa faces challenges related to high population growth, poverty, unsusta
 <!-- #![](Images/workflow.png) -->
 
 <p align="center">
-  <img width="400" height="500" src="https://github.com/SERVIR/SERVIR-Applied-Deep-Learning-Book/blob/main/Images/workflow.png">
+  <img width="400" height="500" src="https://github.com/SERVIR/WENDOU/blob/main/Images/workflow.png">
 </p>
+
