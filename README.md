@@ -12,6 +12,7 @@ https://waterwatch.servirglobal.net/
 https://youtu.be/OQgirB0fnmU?si=L5FT81yM5gaCA1gr
 
 
-<!-- #![](Images/workflow.png) -->
+![](Images/workflow.png)
+
 
 
